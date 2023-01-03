@@ -19,7 +19,10 @@ export default function App() {
   }, [])
 
   return (
-    <div className="container" >
+    <div
+    aria-live="polite"
+    className="flex justify-center items-center h-screen w-screen flex-col bg-slate-200"
+  >
       {!session ? <Auth /> : <Account key={session.user.id} session={session} />}
     </div>
   )

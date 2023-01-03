@@ -22,30 +22,29 @@ const Auth = () => {
   }
 
   return (
-    <div className="row flex-center flex">
-      <div className="col-6 form-widget" aria-live="polite">
-        <h1 className="header">Supabase + React</h1>
-        <p className="description">Sign in via magic link with your email below</p>
+    <>
+       <h3 className='font-bold text-blue-800 text-4xl mb-2'>AI Chat</h3>
+        <p className="text-blue-600 m-2">Sign in via magic link with your email below</p>
         {loading ? (
           'Sending magic link...'
         ) : (
-          <form onSubmit={handleLogin}>
-            <label htmlFor="email">Email</label>
+          <form onSubmit={handleLogin} className="m-2">
+        
             <input
               id="email"
-              className="inputField"
+              className="p-3 rounded-md"
               type="email"
               placeholder="Your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <button className="button block" aria-live="polite">
+            <button className="bg-blue-500 rounded-md p-3 font-bold m-4 text-white" aria-live="polite">
               Send magic link
             </button>
           </form>
         )}
-      </div>
-    </div>
+  
+    </>
   )
 }
 
