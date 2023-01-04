@@ -8,11 +8,12 @@ const Account = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [activeContact, setActiveContact] = useState<Contact | null>(null);
 
   useEffect(() => {
     getProfile();
     getContacts();
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     const profiles = supabase
@@ -116,20 +117,37 @@ const Account = ({ session }: { session: Session }) => {
 
   return (
     <>
-      <SideBar contacts={contacts} />
+      <SideBar contacts={contacts} setContact={setActiveContact} />
 
-      {
-        username?.length === 0 && <NameForm
-          updateProfile={updateProfile}
-          username={username}
-          setUsername={setUsername}
-          loading={loading}
-        />
+      {username?.length === 0 && (
+        <>
+          <NameForm
+            updateProfile={updateProfile}
+            username={username}
+            setUsername={setUsername}
+            loading={loading}
+          />
+        </>
+      )}
+
+      <div className="bg-blue-600 rounded-xl absolute m-1 top-3 left-60">
+        <h1 className="font-bold text-white text-xl p-2">{
+          activeContact ? activeContact.name : username
+        }</h1>
+      </div>
+
+      <div className="flex pl-60 pr-60 pb-10 pt-20 w-full h-full">
+      <div className="container mx-auto bg-white p-4 rounded-xl">
+        {
+       
       }
+      </div>
+
+      </div>
 
       <button
         type="button"
-        className="bg-red-500 rounded-md p-2 font-bold m-1 text-white absolute top-1 right-1"
+        className="bg-red-500 rounded-xl p-2 font-bold m-1 text-white absolute top-1 right-1"
         onClick={() => supabase.auth.signOut()}
       >
         Sign Out
