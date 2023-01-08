@@ -3,6 +3,7 @@ import { supabase } from "./supabaseClient";
 import { Session } from "@supabase/gotrue-js/src/lib/types";
 import SideBar from "./components/SideBar";
 import NameForm from "./components/NameForm";
+import { getContacts, getProfile, updateProfile } from "./utils/supabase";
 
 const Account = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState(true);
@@ -11,8 +12,8 @@ const Account = ({ session }: { session: Session }) => {
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
 
   useEffect(() => {
-    getProfile();
-    getContacts();
+    getProfile({setLoading, setUsername, session, supabase});
+    getContacts({setLoading, setContacts, session, supabase, contacts});
   }, []);
 
   useEffect(() => {
@@ -36,85 +37,7 @@ const Account = ({ session }: { session: Session }) => {
     };
   }, []);
 
-  const getProfile = async () => {
-    try {
-      setLoading(true);
-      const { user } = session;
-
-      let { data, error, status } = await supabase
-        .from("users")
-        .select(`username`)
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        setUsername(data.username);
-      }
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getContacts = async () => {
-    try {
-      setLoading(true);
-      const { user } = session;
-
-      let { data, error, status } = await supabase
-        .from("users_chat")
-        .select("users (username, id)")
-        .neq("user_id", user.id);
-
-      if (error && status !== 406) {
-        throw error;
-      }
-      if (data) {
-        let decomposed: Contact[] = data.map((x: any) => {
-          return {
-            name: x.users.username,
-            id: x.users.id,
-          };
-        });
-
-        setContacts([...contacts, ...decomposed]);
-      }
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateProfile = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    try {
-      setLoading(true);
-      const { user } = session;
-
-      const updates = {
-        id: user.id,
-        username,
-      };
-
-      let { error } = await supabase.from("users").upsert(updates);
-
-      if (error) {
-        throw error;
-      }
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   return (
     <>
       <SideBar contacts={contacts} setContact={setActiveContact} />
@@ -122,7 +45,9 @@ const Account = ({ session }: { session: Session }) => {
       {username?.length === 0 && (
         <>
           <NameForm
-            updateProfile={updateProfile}
+            updateProfile={(e) => updateProfile({
+              setLoading, session, supabase, e, username
+            })}
             username={username}
             setUsername={setUsername}
             loading={loading}
