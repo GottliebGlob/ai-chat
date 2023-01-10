@@ -2,12 +2,19 @@ import React from 'react';
 
 interface NameForm {
     updateProfile: (e: React.SyntheticEvent) => Promise<void>
-    username: string | null
-    setUsername: (value: React.SetStateAction<string | null>) => void
+    user: User | null
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
     loading: boolean
 }
 
-export const NameForm = ({updateProfile, username, setUsername, loading}: NameForm) => {
+export const NameForm = ({updateProfile, user, setUser, loading}: NameForm) => {
+
+const usernameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (user) {
+    setUser({...user, name: e.target.value})
+  }
+}
+
     return (
         <form onSubmit={updateProfile} className="flex justify-center items-center flex-col">
           <div >
@@ -15,9 +22,9 @@ export const NameForm = ({updateProfile, username, setUsername, loading}: NameFo
             <input
               id="username"
               type="text"
-              value={username || ''}
+              value={user?.name || ''}
               className="p-2 rounded-md font-bold"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => usernameHandler(e)}
             />
           </div>
        

@@ -11,16 +11,17 @@ export const SideBar = ({ contacts, setContact }: SideBar) => {
       <h1 className="font-bold text-white text-2xl mb-4">Chats:</h1>
 
       <div className="flex flex-col">
-        {contacts.map((element, index) => {
+        {contacts.map((element) => {
           return (
+            <div key={element.id}  onClick={() => setContact(element)}>
+
             <div
-              onClick={() => setContact(element)}
-              key={index}
               className="bg-blue-400 rounded-full m-3 p-5 h-8 w-8 flex justify-center items-center cursor-pointer"
             >
               <h3 className="font-bold text-white">
                 {element.name.substr(0, 1)}
               </h3>
+            </div>
             </div>
           );
         })}
